@@ -59,7 +59,9 @@ class InventoryPageValidations {
         allure.endStep('passed')
     }
 
-    async verifyProductsHaveRequiredDetails() {
+    async verifyAllProductsHaveRequiredDetails() {
+
+        allure.startStep('Verify that all products have the required details')
 
         allure.startStep('Get the number of visible products')
         const productCount = await InventoryPage.getNumberOfProducts()
@@ -100,9 +102,12 @@ class InventoryPageValidations {
             expect(btnText.toLowerCase()).toContain('add to cart')            
             allure.endStep('passed')
         }        
+        allure.endStep('passed')
     }
 
     async verifyProductsAreUnique() {
+
+        allure.startStep('Verify that each product is unique')
 
         allure.startStep('Get the number of visible products')
         const productCount = await InventoryPage.getNumberOfProducts()
@@ -125,7 +130,8 @@ class InventoryPageValidations {
             imgSet.add(imgSrc)
             allure.addStep(`Product #${i + 1} is unique`)
             allure.endStep('passed')
-        }        
+        }      
+        allure.endStep('passed')  
     }
 
     async verifyElementInsideParent(parentSelector, childSelector, name) {
@@ -154,18 +160,20 @@ class InventoryPageValidations {
     async verifyCartUpdatesBadge(expectedCount) {
         allure.startStep(`Verify cart badge updates to ${expectedCount}`)
         const actualCount = await InventoryPage.getCartBadgeCount()
-        if (actualCount !== expectedCount) {
-            const screenshot = await browser.takeScreenshot()
-            allure.addAttachment(
-                `Cart badge mismatch`,
-                Buffer.from(screenshot, 'base64'),
-                'image/png'
-            )
-            throw new Error(`Cart badge expected: ${expectedCount}, actual: ${actualCount}`)
-        }
+        expect(actualCount).toBe(expectedCount)
         allure.addStep(`Cart badge correctly updated to ${actualCount}`)
         allure.endStep('passed')
     }
+
+    async verifyAllProductsCanBeAddedToCart() {
+        allure.startStep(`Verify that all products can be added to cart`)
+        const buttons = await InventoryPage.addToCartButtons
+        for (let i = 0; i < buttons.length; i++) { 
+            const buttonId = await buttons[i].getAttribute('id')
+            expect(buttonId).toContain('add-to-cart')
+        }
+        allure.endStep('passed')
+    }    
 }
 
 module.exports = new InventoryPageValidations()

@@ -40,67 +40,6 @@ class InventoryPage extends Page {
         allure.endStep('passed')
     }
 
-    async openBurgerMenu() {
-        allure.addStep('Open burger menu')
-        const burgerMenuButton = await $('#react-burger-menu-btn')
-        await burgerMenuButton.click()
-        const menuSelector = $('.bm-menu-wrap')
-        await browser.waitUntil(
-            async () => {
-                const hiddenAttr = await menuSelector.getAttribute('hidden')
-                return hiddenAttr !== 'true' && hiddenAttr !== ''
-            }, {
-                timeout: 3000, 
-                timeoutMsg: 'Burger menu did not open (hidden=true still present)'
-            }
-        )
-        allure.addStep('Burger menu opened')
-    }
-
-    async closeBurgerMenu() {
-        allure.addStep('Close burger menu');
-        const burgerMenuCloseButton = await $('#react-burger-cross-btn')
-        await burgerMenuCloseButton.click();
-        const menuSelector = $('.bm-menu-wrap')
-        await browser.waitUntil(
-            async () => {
-                const hiddenAttr = await menuSelector.getAttribute('hidden');
-                return hiddenAttr === 'true';
-            }, {
-                timeout: 3000, 
-                timeoutMsg: 'Burger menu did not close'
-            }
-        )
-        allure.addStep('Burger menu closed')
-    }
-
-    async logout() {
-        allure.startStep('Logout via burger menu')
-        await this.openBurgerMenu()
-        allure.addStep('Click Logout menu option')     
-        const logoutLink = await $('#logout_sidebar_link')
-        await logoutLink.click()
-        allure.endStep('passed')
-    }
-
-    async getNumberOfProducts() {
-        allure.addStep('Get total number of products displayed')
-        const count = (this.productItems).length
-        return count
-    }
-
-    async getVisibleProductNames() {
-        allure.startStep('Get visible product names')
-        const names = []
-        const productNameElements = await $$('.inventory_item_name')
-        for (const el of productNameElements) {
-            if (await el.isDisplayed()) names.push(await el.getText())
-        }
-        allure.addAttachment('Visible products', JSON.stringify(names, null, 2), 'application/json')
-        allure.endStep('passed')
-        return names
-    }
-
     async addProductToCartByIndex(index) {
         allure.startStep(`Add product at index ${index} to cart`)
         const buttons = this.addToCartButtons
@@ -135,22 +74,22 @@ class InventoryPage extends Page {
         allure.endStep('passed')
     }
 
-    async getCartBadgeCount() {
-        allure.startStep('Get number of items in the cart badge')
-        let count = 0
-        if (await this.cart.isExisting()) {
-            count = parseInt(await this.cart.getText())
-        }
-        allure.addStep(`Cart count: ${count}`)
-        allure.endStep('passed')
+    async getNumberOfProducts() {
+        allure.addStep('Get total number of products displayed')
+        const count = (this.productItems).length
         return count
     }
 
-    async sortProductsBy(optionText) {
-        allure.startStep(`Sort products by option: ${optionText}`)
-        const dropdown = this.sortDropdown
-        await dropdown.selectByVisibleText(optionText)
+    async getVisibleProductNames() {
+        allure.startStep('Get visible product names')
+        const names = []
+        const productNameElements = await $$('.inventory_item_name')
+        for (const el of productNameElements) {
+            if (await el.isDisplayed()) names.push(await el.getText())
+        }
+        allure.addAttachment('Visible products', JSON.stringify(names, null, 2), 'application/json')
         allure.endStep('passed')
+        return names
     }
 
     async getProductPricesAsNumbers() {
@@ -165,6 +104,66 @@ class InventoryPage extends Page {
         allure.endStep('passed')
         return prices
     }
+
+    async getCartBadgeCount() {
+        allure.startStep('Get Cart Badge Count')
+        let count = 0
+        if (await this.cart.isExisting()) {
+            count = parseInt(await this.cart.getText())
+        }
+        allure.addStep(`Cart Badge: ${count}`)
+        allure.endStep('passed')
+        return count
+    }
+
+    async sortProductsBy(optionText) {
+        allure.startStep(`Sort products by option: ${optionText}`)
+        const dropdown = this.sortDropdown
+        await dropdown.selectByVisibleText(optionText)
+        allure.endStep('passed')
+    }
+
+    async goToCart() {
+        allure.startStep('Goto Cart page')
+        await this.cart.click()
+        allure.endStep('passed')
+    }
+    
+    async getProductDetailsByIndex(index) {
+        allure.startStep(`Get product details at index ${index}`)
+        const products = await $$('.inventory_item')
+        if (index < 0 || index >= products.length) {
+            throw new Error(`Invalid product index: ${index}. Total products: ${products.length}`)
+        }
+        const product = products[index]
+        const nameEl = await product.$('.inventory_item_name')
+        const descEl = await product.$('.inventory_item_desc')
+        const priceEl = await product.$('.inventory_item_price')
+        const imageEl = await product.$('img.inventory_item_img')
+        const buttonEl = await product.$('button')
+        const name = await nameEl.getText()
+        const description = await descEl.getText()
+        const priceText = await priceEl.getText()
+        const price = parseFloat(priceText.replace('$', ''))
+        const imageSrc = await imageEl.getAttribute('src')
+        const buttonText = await buttonEl.getText()
+        const productDetails = {
+            index,
+            name,
+            description,
+            price,
+            imageSrc,
+            buttonText
+        }
+        allure.addAttachment(
+            `Product ${index} details`,
+            JSON.stringify(productDetails, null, 2),
+            'application/json'
+        )
+        allure.endStep('passed')
+        return productDetails
+    }
+
 }
 
 module.exports = new InventoryPage()
