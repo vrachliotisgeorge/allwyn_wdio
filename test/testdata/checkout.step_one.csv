@@ -1,0 +1,17 @@
+description;severity;username;password;firstName;lastName;postalCode;expectedResult;expectedError
+should fail to checkout as standard_user if First Name is empty;critical;standard_user;secret_sauce;;;;failure;First Name is required
+should fail to checkout as standard_user if Last Name is empty;critical;standard_user;secret_sauce;standard_user_first_name;;;failure;Last Name is required
+should fail to checkout as standard_user if Postal Code is empty;critical;standard_user;secret_sauce;standard_user_first_name;standard_user_last_name;;failure;Postal Code is required
+should checkout as standard_user if contact information is valid;critical;standard_user;secret_sauce;standard_user_first_name;standard_user_last_name;standard_user_postal_code;success;
+should fail to checkout as problem_user if First Name is empty;critical;problem_user;secret_sauce;;;;failure;First Name is required
+should fail to checkout as problem_user if Last Name is empty;critical;problem_user;secret_sauce;problem_user_first_name;;;failure;Last Name is required
+should fail to checkout as problem_user if Postal Code is empty;critical;problem_user;secret_sauce;problem_user_first_name;problem_user_last_name;;failure;Postal Code is required
+should checkout as problem_user if contact information is valid;critical;problem_user;secret_sauce;problem_user_first_name;problem_user_last_name;problem_user_postal_code;success;
+should fail to checkout as performance_glitch_user if First Name is empty;critical;performance_glitch_user;secret_sauce;;;;failure;First Name is required
+should fail to checkout as performance_glitch_user if Last Name is empty;critical;performance_glitch_user;secret_sauce;performance_glitch_user_first_name;;;failure;Last Name is required
+should fail to checkout as performance_glitch_user if Postal Code is empty;critical;performance_glitch_user;secret_sauce;performance_glitch_user_first_name;performance_glitch_user_last_name;;failure;Postal Code is required
+should checkout as performance_glitch_user if contact information is valid;critical;performance_glitch_user;secret_sauce;performance_glitch_user_first_name;performance_glitch_user_last_name;performance_glitch_user_postal_code;success;
+should fail to checkout as visual_user if First Name is empty;critical;visual_user;secret_sauce;;;;failure;First Name is required
+should fail to checkout as visual_user if Last Name is empty;critical;visual_user;secret_sauce;visual_user_first_name;;;failure;Last Name is required
+should fail to checkout as visual_user if Postal Code is empty;critical;visual_user;secret_sauce;visual_user_first_name;visual_user_last_name;;failure;Postal Code is required
+should checkout as visual_user if contact information is valid;critical;visual_user;secret_sauce;visual_user_first_name;visual_user_last_name;visual_user_postal_code;success;

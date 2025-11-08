@@ -24,9 +24,9 @@ describe('Login Page Tests', () => {
             if (expectedResult === 'success') {
                 await InventoryPage.waitForPageToLoad()
             } else {
-                await LoginPageValidator.validateErrorMessageIsDisplayed()
+                await LoginPageValidator.verifyErrorMessageIsDisplayed()
                 if (expectedError != '') {
-                    await LoginPageValidator.validateErrorMessageContainsText(expectedError)
+                    await LoginPageValidator.verifyErrorMessageContainsText(expectedError)
                 }                
             }
             

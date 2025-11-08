@@ -119,11 +119,11 @@ class CartPageValidations {
         allure.endStep('passed')
     }    
 
-    async verifyOnCheckoutPage() {
+    async verifyOnCheckoutStepOnePage() {
         allure.startStep('Verify user proceeds to checkout')
         const url = await browser.getUrl()
         allure.addAttachment('Current URL', url, 'text/plain')
-        await expect(url).toContain('checkout')
+        await expect(url).toContain('checkout-step-one')
         allure.endStep('passed')
     }    
 

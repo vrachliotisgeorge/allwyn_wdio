@@ -6,13 +6,9 @@ const { pageLoadTimeout } = require('../config/allwyn.env.config')
 class LoginPage extends Page {
 
     get loginLogo() { return $('.login_logo') }
-
     get inputUsername() { return $('#user-name') }
-
     get inputPassword() { return $('#password') }
-
     get btnLogin() { return $('#login-button') }
-
     get errorMessage() { return $('h3[data-test="error"]') }
 
     open(pageUrl) {
