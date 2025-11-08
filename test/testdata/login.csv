@@ -1,0 +1,14 @@
+description;severity;username;password;expectedResult;expectedError
+should successfully login as standard_user;critical;standard_user;secret_sauce;success;
+should successfully login as problem_user;critical;problem_user;secret_sauce;success;
+should successfully login as performance_glitch_user;critical;performance_glitch_user;secret_sauce;success;
+should successfully login as visual_user;critical;visual_user;secret_sauce;success;
+should fail to login with empty username;critical;;;failure;Username is required
+should fail to login with empty password;critical;standard_user;;failure;Password is required
+should fail to login with invalid username;critical;not_valid_user;secret_sauce;failure;Username and password do not match any user in this service
+should fail to login as standard_user with invalid password;critical;standard_user;invalid_password;failure;Username and password do not match any user in this service
+should fail to login as problem_user with invalid password;critical;problem_user;invalid_password;failure;Username and password do not match any user in this service
+should fail to login as performance_glitch_user with invalid password;critical;performance_glitch_user;invalid_password;failure;Username and password do not match any user in this service
+should fail to login as visual_user with invalid password;critical;visual_user;invalid_password;failure;Username and password do not match any user in this service
+should fail to login as locked_out_user;critical;locked_out_user;secret_sauce;failure;Sorry, this user has been locked out
+should fail to login as error_user;critical;error_user;secret_sauce;failure;
