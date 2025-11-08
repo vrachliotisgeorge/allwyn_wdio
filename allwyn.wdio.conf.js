@@ -4,10 +4,11 @@ const allure = require('@wdio/allure-reporter').default
 
 exports.config = {
     specs: [
-        './test/specs/**/*.js'
+        './test/specs/allwyn.login.spec.js',
+        './test/specs/allwyn.inventory.spec.js'
     ],
     exclude: [],
-    maxInstances: 10,
+    maxInstances: 1,
     capabilities: [
         {
             browserName: 'chrome',
