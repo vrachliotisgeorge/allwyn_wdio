@@ -1,4 +1,4 @@
-# WebDriverIO SauceDemo Automation Framework
+# Allwyn WebDriverIO SauceDemo Automation Framework
 
 ## Overview
 
