@@ -1,4 +1,4 @@
-# README.md --- WebDriverIO SauceDemo Automation Framework
+# WebDriverIO SauceDemo Automation Framework
 
 ## Overview
 
