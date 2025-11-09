@@ -10,9 +10,9 @@ const CheckoutStepOneValidator = require('../validations/checkout.step_one.page.
 
 for (const { description, severity, username, password, firstName, lastName, postalCode, expectedResult, expectedError } of TestData) {
 
-    describe('Checkout Step One Page Tests', () => {
+    describe(`Checkout Step One Page Tests for user: ${username}`, () => {
 
-        before(async () => {
+        beforeEach(async () => {
             await browser.reloadSession()
             await BaseSpec.navigateToInventoryPage(username, password)
             await BaseSpec.addProductsToCartAndVerify(3)

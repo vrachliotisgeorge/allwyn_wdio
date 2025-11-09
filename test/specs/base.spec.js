@@ -1,9 +1,7 @@
 /* eslint-disable no-undef */
 const allure = require('@wdio/allure-reporter')
-const { browser } = require('@wdio/globals')
 const { baseUrl } = require('../config/allwyn.env.config')
 const LoginPage = require('../pageobjects/login.page')
-const LoginPageValidator = require('../validations/login.page.validations')
 const InventoryPage = require('../pageobjects/inventory.page')
 const InventoryPageValidator = require('../validations/inventory.page.validations')
 const CartPage = require('../pageobjects/cart.page')
