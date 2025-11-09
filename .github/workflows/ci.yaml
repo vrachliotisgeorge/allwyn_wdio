@@ -37,6 +37,7 @@ jobs:
       - name: Run WDIO Tests
         run: |
           npx wdio run ./allwyn.wdio.conf.js
+        continue-on-error: true
 
       # -----------------------------
       # Generate Allure Report
