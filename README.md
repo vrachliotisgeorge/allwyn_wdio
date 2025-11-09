@@ -308,3 +308,13 @@ Test are running sequentialy.
 Enable parallel test execution after evaluating possible test interference and/or race conditions.
 
 ------------------------------------------------------------------------
+
+## 🔸 5. Depends-On Missing
+
+Tests run independently, no depends-on logic has been implemeted.
+
+### ✅ Possible Future Enhancement
+
+Add test dependencies, skip test execution if core functionality required has failed in previous tests, to speed-up test suite execution
+
+------------------------------------------------------------------------
