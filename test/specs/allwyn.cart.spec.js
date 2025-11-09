@@ -1,24 +1,21 @@
 /* eslint-disable no-undef */
-const csvReader = require('../utils/csvReader')
 const allure = require('@wdio/allure-reporter')
-const testData = csvReader.readCSV('./test/testdata/cart.csv')
+const csvReader = require('../utils/csvReader')
+const TestData = csvReader.readCSV('./test/testdata/cart.csv')
+const BaseSpec = require('./base.spec')
 const LoginPage = require('../pageobjects/login.page')
 const InventoryPage = require('../pageobjects/inventory.page')
 const InventoryPageValidator = require('../validations/inventory.page.validations')
 const CartPage = require('../pageobjects/cart.page')
 const CartPageValidator = require('../validations/cart.page.validations')
-const { baseUrl } = require('../config/allwyn.env.config')
 
-for (const { username, password } of testData) {
+for (const { username, password } of TestData) {
 
 	describe(`Cart Page Tests for user: ${username}`, () => {
 
 		beforeEach(async () => {
 			await browser.reloadSession()
-			await LoginPage.open(baseUrl)
-			await LoginPage.waitForPageToLoad()
-			await LoginPage.login(username, password)
-			await InventoryPage.waitForPageToLoad()
+			await BaseSpec.navigateToInventoryPage(username, password)
 		})
 		
 		it(`should display all expected elements on the Cart page for user: ${username}`, async () => {
@@ -27,7 +24,7 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical');
 			allure.addDescription(`Verify that - when logged in as ${username} - all expected elements on the Cart page are displayed`)
 
-			await InventoryPage.goToCart()
+			await InventoryPage.clickCart()
 			await CartPage.waitForPageToLoad()
 
 			await CartPageValidator.verifyCartIsDisplayed()
@@ -42,140 +39,35 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription('Verify that items added from inventory appear correctly in the cart')
 
-			const productCount = await InventoryPage.getNumberOfProducts()
-			expect(productCount).toBeGreaterThan(3)
-			
-			allure.startStep('Add (3) Products to Cart')
-			const productsToAdd = Math.min(3, productCount) 
-			const addedProducts = []
-			for (let i = 0; i < productsToAdd; i++) {					
-				const productDetails = await InventoryPage.getProductDetailsByIndex(i)
-				addedProducts.push(productDetails)					
-				allure.startStep(`Add product at index ${i} to cart`)
-				await InventoryPage.addProductToCartByIndex(i)
-				const expectedCount = i + 1
-				await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-				await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
-
-			await InventoryPage.goToCart()
-			await CartPage.waitForPageToLoad()
-
-			allure.startStep('Verify Cart contents + items')
-			await CartPageValidator.verifyCartItemsCountEquals(addedProducts.length)
-			await CartPageValidator.verifyAllCartItemsHaveRequiredDetails()
-			await CartPageValidator.verifyCartMatchesInventory(addedProducts)
-			allure.endStep('passed')				
+			await BaseSpec.addProductsToCartAndVerify(3)
 		})
 
-		it(`should add (3) products, remove them one by one from cart and verify badge + buttons for user: ${username}`, async () => {
+		it(`should add (3) products, then clear cart and verify badge + buttons for user: ${username}`, async () => {
 
 			allure.addFeature('Cart Page Functionality')
 			allure.addSeverity('critical')
 			allure.addDescription('Verify that items added from inventory appear correctly in the cart')
 
-			const productCount = await InventoryPage.getNumberOfProducts()
-			expect(productCount).toBeGreaterThan(3)
-			
-			allure.startStep('Add (3) Products to Cart')
-			const productsToAdd = Math.min(3, productCount) 
-			const addedProducts = []
-			for (let i = 0; i < productsToAdd; i++) {					
-				const productDetails = await InventoryPage.getProductDetailsByIndex(i)
-				addedProducts.push(productDetails)					
-				allure.startStep(`Add product at index ${i} to cart`)
-				await InventoryPage.addProductToCartByIndex(i)
-				const expectedCount = i + 1
-				await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-				await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
-
-			await InventoryPage.goToCart()
-			await CartPage.waitForPageToLoad()
-
-			allure.startStep('Verify Cart contents + items')
-			await CartPageValidator.verifyCartItemsCountEquals(addedProducts.length)
-			await CartPageValidator.verifyAllCartItemsHaveRequiredDetails()
-			await CartPageValidator.verifyCartMatchesInventory(addedProducts)
-			allure.endStep('passed')				
-
-			allure.startStep('Remove All Products from Cart')
-			let expectedCount = addedProducts.length
-			for (let i = 0; i < addedProducts.length; i++) {
-				await CartPage.removeItemByIndex(0)
-				expectedCount--
-				if (expectedCount > 0) {
-					await CartPageValidator.verifyCartBadgeIsDisplayed()
-					await CartPageValidator.verifyCartUpdatesBadge(expectedCount)
-				} else {
-					await CartPageValidator.verifyCartBadgeIsNotDisplayed()		
-				}			
-			}				
-			await CartPageValidator.verifyCartItemsCountEquals(0)
-			allure.endStep('passed')
-
+			await BaseSpec.addProductsToCartAndVerify(3)
+			await BaseSpec.clearCart()
 			await CartPage.clickContinueShopping()
 			await InventoryPage.waitForPageToLoad()
 			await InventoryPageValidator.verifyAllProductsCanBeAddedToCart()
 		})
 
-		it(`should add (3) products, remove them from inventory and verify cart is empty for user: ${username}`, async () => {
+		it(`should add (3) products, then remove them from inventory page and verify cart is empty for user: ${username}`, async () => {
 
 			allure.addFeature('Cart Page Functionality')
 			allure.addSeverity('critical')
 			allure.addDescription('Verify that items added from inventory appear correctly in the cart')
 
-			const productCount = await InventoryPage.getNumberOfProducts()
-			expect(productCount).toBeGreaterThan(3)
-			
-			allure.startStep('Add (3) Products to Cart')
-			const productsToAdd = Math.min(3, productCount) 
-			const addedProducts = []
-			for (let i = 0; i < productsToAdd; i++) {					
-				const productDetails = await InventoryPage.getProductDetailsByIndex(i)
-				addedProducts.push(productDetails)					
-				allure.startStep(`Add product at index ${i} to cart`)
-				await InventoryPage.addProductToCartByIndex(i)
-				const expectedCount = i + 1
-				await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-				await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
-
-			await InventoryPage.goToCart()
-			await CartPage.waitForPageToLoad()
-
-			allure.startStep('Verify Cart contents + items')
-			await CartPageValidator.verifyCartItemsCountEquals(addedProducts.length)
-			await CartPageValidator.verifyAllCartItemsHaveRequiredDetails()
-			await CartPageValidator.verifyCartMatchesInventory(addedProducts)
-			allure.endStep('passed')				
-
-			allure.startStep('Return to Inventory Page and remove Products from Cart')
+			await BaseSpec.addProductsToCartAndVerify(3)
 			await CartPage.clickContinueShopping()
 			await InventoryPage.waitForPageToLoad()
-			let expectedCount = productsToAdd			
-			for (let i = 0; i < productsToAdd; i++) {					
-				allure.startStep(`Remove product at index ${i} from cart`)
-				await InventoryPage.removeProductFromCartByIndex(i)
-				expectedCount--					
-				if (expectedCount > 0) {
-					await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-					await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				} else {
-					await InventoryPageValidator.verifyCartBadgeIsNotDisplayed()
-				}					
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
-
+			await BaseSpec.removeInventoryProductsFromCart(3)
+			
 			allure.startStep('Verify that Cart is empty')
-			await InventoryPage.goToCart()
+			await InventoryPage.clickCart()
 			await CartPage.waitForPageToLoad()
 			await CartPageValidator.verifyCartItemsCountEquals(0)
 			allure.endStep('passed')
@@ -191,7 +83,7 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription('Verify that checkout is not possible when the cart is empty')
 
-			await InventoryPage.goToCart()
+			await InventoryPage.clickCart()
 			await CartPage.waitForPageToLoad()
 
 			await CartPageValidator.verifyCartItemsCountEquals(0)
@@ -205,37 +97,11 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription('Verify that items added from inventory appear correctly in the cart')
 
-			const productCount = await InventoryPage.getNumberOfProducts()
-			expect(productCount).toBeGreaterThan(3)
-			
-			allure.startStep('Add (3) Products to Cart')
-			const productsToAdd = Math.min(3, productCount) 
-			const addedProducts = []
-			for (let i = 0; i < productsToAdd; i++) {					
-				const productDetails = await InventoryPage.getProductDetailsByIndex(i)
-				addedProducts.push(productDetails)					
-				allure.startStep(`Add product at index ${i} to cart`)
-				await InventoryPage.addProductToCartByIndex(i)
-				const expectedCount = i + 1
-				await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-				await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
-
-			await InventoryPage.goToCart()
-			await CartPage.waitForPageToLoad()
-
-			allure.startStep('Verify Cart contents + items')
-			await CartPageValidator.verifyCartItemsCountEquals(addedProducts.length)
-			await CartPageValidator.verifyAllCartItemsHaveRequiredDetails()
-			await CartPageValidator.verifyCartMatchesInventory(addedProducts)
-			allure.endStep('passed')	
-			
+			await BaseSpec.addProductsToCartAndVerify(3)
 			await CartPage.clickCheckout()
-			await CartPageValidator.verifyOnCheckoutPage()				
+			await CartPageValidator.verifyOnCheckoutStepOnePage()				
 		})
-		
+
 		afterEach(async () => {                
 			await CartPage.logout()
 			await LoginPage.waitForPageToLoad()

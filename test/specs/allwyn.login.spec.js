@@ -1,15 +1,14 @@
 /* eslint-disable no-undef */
-const csvReader = require('../utils/csvReader')
 const allure = require('@wdio/allure-reporter')
-const testData = csvReader.readCSV('./test/testdata/login.csv')
-const LoginPage = require('../pageobjects/login.page')
+const csvReader = require('../utils/csvReader')
+const TestData = csvReader.readCSV('./test/testdata/login.csv')
+const BaseSpec = require('./base.spec')
 const LoginPageValidator = require('../validations/login.page.validations')
 const InventoryPage = require('../pageobjects/inventory.page')
-const { baseUrl } = require('../config/allwyn.env.config')
 
 describe('Login Page Tests', () => {
 
-    for (const { description, severity, username, password, expectedResult, expectedError } of testData) {
+    for (const { description, severity, username, password, expectedResult, expectedError } of TestData) {
 
         it(description, async () => {
 
@@ -18,9 +17,8 @@ describe('Login Page Tests', () => {
             allure.addDescription('Verify ' + description)            
             
             await browser.reloadSession()
-            await LoginPage.open(baseUrl)
-            await LoginPage.waitForPageToLoad()
-            await LoginPage.login(username, password)
+            await BaseSpec.loginUser(username, password)
+            
             if (expectedResult === 'success') {
                 await InventoryPage.waitForPageToLoad()
             } else {

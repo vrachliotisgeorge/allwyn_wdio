@@ -75,32 +75,32 @@ class InventoryPage extends Page {
     }
 
     async getNumberOfProducts() {
-        allure.addStep('Get total number of products displayed')
+        allure.addStep('Get total number of inventory products')
         const count = (this.productItems).length
         return count
     }
 
-    async getVisibleProductNames() {
-        allure.startStep('Get visible product names')
+    async getProductsNames() {
+        allure.startStep('Get inventory products names')
         const names = []
         const productNameElements = await $$('.inventory_item_name')
         for (const el of productNameElements) {
             if (await el.isDisplayed()) names.push(await el.getText())
         }
-        allure.addAttachment('Visible products', JSON.stringify(names, null, 2), 'application/json')
+        allure.addAttachment('Inventory products', JSON.stringify(names, null, 2), 'application/json')
         allure.endStep('passed')
         return names
     }
 
     async getProductPricesAsNumbers() {
-        allure.startStep('Get product prices as numeric values')
+        allure.startStep('Get inventory products prices as numeric values')
         const prices = []
         const productPrices = await $$('.inventory_item_price')
         for (const el of productPrices) {
             const text = await el.getText()
             prices.push(parseFloat(text.replace('$', '')))
         }
-        allure.addAttachment('Product prices', JSON.stringify(prices, null, 2), 'application/json')
+        allure.addAttachment('Inventory products prices', JSON.stringify(prices, null, 2), 'application/json')
         allure.endStep('passed')
         return prices
     }
@@ -123,7 +123,7 @@ class InventoryPage extends Page {
         allure.endStep('passed')
     }
 
-    async goToCart() {
+    async clickCart() {
         allure.startStep('Goto Cart page')
         await this.cart.click()
         allure.endStep('passed')

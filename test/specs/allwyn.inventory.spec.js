@@ -1,22 +1,19 @@
 /* eslint-disable no-undef */
-const csvReader = require('../utils/csvReader')
 const allure = require('@wdio/allure-reporter')
-const testData = csvReader.readCSV('./test/testdata/inventory.csv')
+const csvReader = require('../utils/csvReader')
+const TestData = csvReader.readCSV('./test/testdata/inventory.csv')
+const BaseSpec = require('./base.spec')
 const LoginPage = require('../pageobjects/login.page')
 const InventoryPage = require('../pageobjects/inventory.page')
 const InventoryPageValidator = require('../validations/inventory.page.validations')
-const { baseUrl } = require('../config/allwyn.env.config')
 
-for (const { username, password } of testData) {
+for (const { username, password } of TestData) {
 
 	describe(`Inventory Page Tests for user: ${username}`, () => {
 
 		before(async () => {
 			await browser.reloadSession()
-			await LoginPage.open(baseUrl)
-			await LoginPage.waitForPageToLoad()
-			await LoginPage.login(username, password)
-			await InventoryPage.waitForPageToLoad()
+			await BaseSpec.navigateToInventoryPage(username, password)
 		})
 		
 		it(`should display all expected elements on the Inventory page for user: ${username}`, async () => {
@@ -67,22 +64,8 @@ for (const { username, password } of testData) {
 
 			await InventoryPageValidator.verifyCartBadgeIsNotDisplayed()
 
-			allure.startStep('Get the number of visible products')
-			const productCount = await InventoryPage.getNumberOfProducts()
-			allure.addStep(`Found ${productCount} products on the Inventory page`)
-			expect(productCount).toBeGreaterThan(0)
-			allure.endStep('passed')
-			
-			allure.startStep('Add Products to Cart')
-			for (let i = 0; i < productCount; i++) {
-				allure.startStep(`Add product at index ${i}`)
-				await InventoryPage.addProductToCartByIndex(i)
-				const expectedCount = i + 1
-				await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-				await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
+			const availableProductsCount = await BaseSpec.getInventoryProductsCount()
+			await BaseSpec.addInventoryProductsToCart(availableProductsCount)	
 		})
 
 		it(`should decrease cart badge when removing products as user: ${username} `, async () => {
@@ -93,27 +76,8 @@ for (const { username, password } of testData) {
 
 			await InventoryPageValidator.verifyCartBadgeIsDisplayed()
 
-			allure.startStep('Get the number of visible products')
-			const productCount = await InventoryPage.getNumberOfProducts()
-			allure.addStep(`Found ${productCount} products on the Inventory page`)
-			expect(productCount).toBeGreaterThan(0)
-			allure.endStep('passed')
-
-			allure.startStep('Remove Products from Cart')
-			for (let i = 0; i < productCount; i++) {
-				allure.startStep(`Remove product at index ${i}`)
-				const currentBadge = await InventoryPage.getCartBadgeCount()
-				await InventoryPage.removeProductFromCartByIndex(i)
-				const expectedCount = currentBadge - 1
-				if (expectedCount > 0) {
-					await InventoryPageValidator.verifyCartBadgeIsDisplayed()
-					await InventoryPageValidator.verifyCartUpdatesBadge(expectedCount)
-				} else {
-					await InventoryPageValidator.verifyCartBadgeIsNotDisplayed()
-				}
-				allure.endStep('passed')
-			}
-			allure.endStep('passed')
+			const productCount = await BaseSpec.getInventoryProductsCount()
+			await BaseSpec.removeInventoryProductsFromCart(productCount)			
 		})
 		
 		it(`should sort products by Name (A to Z) as user: ${username} `, async () => {
@@ -122,18 +86,13 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription(`Verify that - when logged in as ${username} - products are sorted correctly when selecting Name (A to Z)`)
 
-			allure.startStep('Select "Name (A to Z)" in sort dropdown')
-			await InventoryPage.sortProductsBy('Name (A to Z)')
-			allure.endStep('passed')
-
-			allure.startStep('Get visible product names after sorting')
-			const productNames = await InventoryPage.getVisibleProductNames()
-			allure.endStep('passed')
+			await BaseSpec.sortInventoryProductsBy('Name (A to Z)')
+			const productNames = await BaseSpec.getAllInventoryProductNames()
 
 			allure.startStep('Verify that products are sorted by Name (A to Z)')
 			const sortedNames = [...productNames].sort((a, b) => a.localeCompare(b))
 			expect(productNames).toEqual(sortedNames)
-			allure.addStep('Products are sorted by Name(A to Z)')
+			allure.addStep('Products are sorted by Name (A to Z)')
 			allure.endStep('passed')
 		})
 
@@ -143,18 +102,13 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription(`Verify that - when logged in as ${username} - products are sorted correctly when selecting Name (Z to A)`)
 
-			allure.startStep('Select "Name (Z to A)" in sort dropdown')
-			await InventoryPage.sortProductsBy('Name (Z to A)')
-			allure.endStep('passed')
-
-			allure.startStep('Get visible product names after sorting')
-			const productNames = await InventoryPage.getVisibleProductNames()
-			allure.endStep('passed')
+			await BaseSpec.sortInventoryProductsBy('Name (Z to A)')
+			const productNames = await BaseSpec.getAllInventoryProductNames()
 
 			allure.startStep('Verify that products are sorted by Name (Z to A)')
 			const sortedNames = [...productNames].sort((b, a) => a.localeCompare(b))
 			expect(productNames).toEqual(sortedNames)
-			allure.addStep('Products are sorted by Name(Z to A')
+			allure.addStep('Products are sorted by Name (Z to A')
 			allure.endStep('passed')
 		})
 
@@ -164,19 +118,14 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription(`Verify that - when logged in as ${username} - products are sorted correctly when selecting Price (low to high)`)
 
-			allure.startStep('Select "Price (low to high)" in sort dropdown')
-			await InventoryPage.sortProductsBy('Price (low to high)')
-			allure.endStep('passed')
-
-			allure.startStep('Get visible product prices after sorting')
-			const prices = await InventoryPage.getProductPricesAsNumbers()
-			allure.endStep('passed')
+			await BaseSpec.sortInventoryProductsBy('Price (low to high)')
+			const prices = await BaseSpec.getAllInventoryProductPrices()
 
 			allure.startStep('Verify that products are sorted by Price (low to high)')
 			for (let i = 0; i < prices.length - 1; i++) {
 				expect(prices[i+1]).toBeGreaterThanOrEqual(prices[i], `Sorting error: price at index ${i} (${prices[i]}) is greater than next price (${prices[i + 1]})`)
 			}
-			allure.addStep('Products are sorted Price (low to high)')
+			allure.addStep('Products are sorted by Price (low to high)')
 			allure.endStep('passed')
 		})
 
@@ -186,19 +135,14 @@ for (const { username, password } of testData) {
 			allure.addSeverity('critical')
 			allure.addDescription(`Verify that - when logged in as ${username} - products are sorted correctly when selecting Price (high to low)`)
 
-			allure.startStep('Select "Price (high to low)" in sort dropdown')
-			await InventoryPage.sortProductsBy('Price (high to low)')
-			allure.endStep('passed')
-
-			allure.startStep('Get visible product prices after sorting')
-			const prices = await InventoryPage.getProductPricesAsNumbers()
-			allure.endStep('passed')
+			await BaseSpec.sortInventoryProductsBy('Price (high to low)')
+			const prices = await BaseSpec.getAllInventoryProductPrices()
 
 			allure.startStep('Verify that products are sorted by Price (high to low)')
 			for (let i = 0; i < prices.length - 1; i++) {
 				expect(prices[i]).toBeGreaterThanOrEqual(prices[i + 1], `Sorting error: price at index ${i} (${prices[i]}) is lower than next price (${prices[i + 1]})`)
 			}
-			allure.addStep('Products are sorted Price (high to low)')
+			allure.addStep('Products are sorted by Price (high to low)')
 			allure.endStep('passed')
 		})
 
