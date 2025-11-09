@@ -4,10 +4,10 @@ const allure = require('@wdio/allure-reporter').default
 
 exports.config = {
     specs: [
-        //'./test/specs/allwyn.login.spec.js',
-        //'./test/specs/allwyn.inventory.spec.js',
-        //'./test/specs/allwyn.cart.spec.js',
-        //'./test/specs/allwyn.checkout.step_one.spec.js',
+        './test/specs/allwyn.login.spec.js',
+        './test/specs/allwyn.inventory.spec.js',
+        './test/specs/allwyn.cart.spec.js',
+        './test/specs/allwyn.checkout.step_one.spec.js',
         './test/specs/allwyn.checkout.step_two.spec.js',
     ],
     exclude: [],
