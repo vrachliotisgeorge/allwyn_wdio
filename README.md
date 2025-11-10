@@ -43,6 +43,11 @@ Functional areas included:
 
 # ✅ Installation & Test Execution
 
+## Prerequisites
+- Node.js v18+ installed
+- Chrome browser installed
+- NPM v9+
+
 ### Install dependencies
 
 ``` bash
@@ -113,7 +118,7 @@ main user flow.
 
 ### Approach
 
--   Data-driven using `login.csv`\
+-   Data-driven using `login.csv`
 -   Positive and negative cases
 
 ### Tests (one per CSV row)
@@ -195,21 +200,21 @@ main user flow.
 
 ## 🎯 FEATURE: User Login
 
-**Spec:** `allwyn.login.spec.js`\
+**Spec:** `allwyn.login.spec.js`
 - All login scenarios
 
 ------------------------------------------------------------------------
 
 ## 🎯 FEATURE: Inventory Page Integrity Check
 
-**Spec:** `allwyn.inventory.spec.js`\
+**Spec:** `allwyn.inventory.spec.js`
 - Inventory UI and structure validation tests
 
 ------------------------------------------------------------------------
 
 ## 🎯 FEATURE: Inventory Page Cart
 
-**Spec:** `allwyn.inventory.spec.js`\
+**Spec:** `allwyn.inventory.spec.js`
 - Cart icon behavior and badge assertions
 
 ------------------------------------------------------------------------
@@ -227,7 +232,7 @@ main user flow.
 
 ## 🎯 FEATURE: Cart Page Integrity Check
 
-**Spec:** `allwyn.cart.spec.js`\
+**Spec:** `allwyn.cart.spec.js`
 - Cart page basic integrity validation
 
 ------------------------------------------------------------------------
@@ -251,7 +256,7 @@ main user flow.
 
 ## 🎯 FEATURE: Checkout Overview
 
-**Spec:** `allwyn.checkout.step_two.spec.js`\
+**Spec:** `allwyn.checkout.step_two.spec.js`
 - UI integrity
 - Order items validation
 - Price summary validation
@@ -259,10 +264,27 @@ main user flow.
 
 ------------------------------------------------------------------------
 
+# ✅ CI/CD Pipeline
+
+A GitHub Actions workflow is provided under `.github/workflows/ci.yml` 
+for automated test execution and Allure report publishing in GitHub Pages.
+
+[Allure Report](https://vrachliotisgeorge.github.io/allwyn_wdio/)
+
+## Manual Publishing of Allure Report to GitHub Pages
+
+1. Run tests locally  
+2. Generate Allure report  
+3. Create/update `gh-pages` branch  
+4. Copy contents of `allure-report/` into branch root  
+5. Commit and push  
+6. Ensure GitHub Pages uses `gh-pages` branch
+
+------------------------------------------------------------------------
+
 # ✅ Framework Limitations
 
-This project intentionally limits scope to **functional UI automation**.\
-The following areas are **not covered** by design.
+The following areas are **not covered**:
 
 ------------------------------------------------------------------------
 
@@ -299,7 +321,7 @@ Enable test execution in Firefox, Edge & Safari + multiple screen resolutions.
 
 ------------------------------------------------------------------------
 
-## 🔸 4. Parallel Test Execution
+## 🔸 4. No Parallel Test Execution
 
 Test are running sequentialy.
 
