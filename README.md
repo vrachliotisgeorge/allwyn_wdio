@@ -43,7 +43,7 @@ Functional areas included:
 
 # ✅ Installation & Test Execution
 
-## Prerequisites
+### Prerequisites
 - Node.js v18+ installed
 - Chrome browser installed
 - NPM v9+
@@ -111,6 +111,24 @@ Defines:
 
 Below is the functional testing strategy, separated by the application's
 main user flow.
+
+## Test Data Files
+
+This framework is data-driven using CSV files located under `/test/testdata`.
+
+| File | Purpose |
+|------|---------|
+| `login.csv` | Positive & negative login combinations |
+| `inventory.csv` | Users for inventory UI and sorting tests |
+| `cart.csv` | Scenarios for cart validation |
+| `checkout.step_one.csv` | Valid and invalid checkout form data |
+| `checkout.step_two.csv` | User info for order completion |
+
+Each row in a CSV file represents one test iteration.
+
+## Test Flow Overview
+
+User Login → Inventory → Cart → Checkout Step One → Checkout Step Two → Complete Order
 
 ------------------------------------------------------------------------
 
